@@ -7,7 +7,20 @@ var storage =   multer.diskStorage({
       callback(null, './filesuploaded');
     },
     filename: function (req, file, callback) {
-      callback(null, file.fieldname + '-' + Date.now());
+      callback(null, file.originalname + '-' + Date.now());
+      console.log({
+        'fileinfo': {
+          'fieldname': file.fieldname,
+          'originalfilename': file.originalname,
+          'encoding': file.encoding,
+          'mimetype': file.mimetype,
+          'size': file.size,
+          'destination': file.destination,
+          'filename': file.filename,
+          'path': file.path,
+          'buffer': file.buffer
+        }
+      });
     }
   });
 
@@ -20,10 +33,13 @@ router.get('/', function(req, res, next) {
 
 router.post('/',function(req,res){
     upload(req,res,function(err) {
-        if(err) {
-            return res.end("Error uploading file.");
-        }
-        res.end("File is uploaded");
+      console.log(req.headers);
+      if(err instanceof multer.MulterError) {
+          console.log(multer.MulterError);
+      } else if(err ) {
+          return res.end("Error uploading file.");
+          }
+      res.end("File is uploaded");
     });
 });
 
